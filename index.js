@@ -1,10 +1,16 @@
 "use strict";
 
 class ReactiveComponent {
-  constructor(template, { data, methods }, mountTarget) {
+  constructor(
+    template,
+    { data, methods, mounted, beforeDestroy },
+    mountTarget
+  ) {
     this.template = template;
     this.mountTarget = document.getElementById(mountTarget);
+    this.mounted = mounted;
     this.template = this.template.bind(this);
+    this.beforeDestroy = beforeDestroy;
 
     for (let field in data) {
       this[`_${field}`] = data[field];
@@ -24,10 +30,16 @@ class ReactiveComponent {
       this[`${method}`] = this[`${method}`].bind(this);
     }
     this.render();
+    this.mounted();
   }
 
   render() {
     this.mountTarget.innerHTML = this.template();
+  }
+  destroy() {
+    this.mountTarget.innerHTML = "";
+    this.beforeDestroy();
+    // this = '';
   }
 }
 
@@ -52,18 +64,25 @@ let component = new ReactiveComponent(
         this.someData = Math.floor(Math.random() * 100);
       },
       increment() {
-        this.counter++
+        this.counter++;
       },
       decrement() {
         setTimeout(() => {
-          this.counter--
-        }, 500)
-      }
+          this.counter--;
+        }, 500);
+      },
+    },
+    mounted() {
+      setTimeout(() => {
+        this.changeSomeData("somethingElse");
+      }, 500);
+      setTimeout(() => {
+        this.destroy;
+      }, 1000)
+    },
+    beforeDestroy() {
+      alert("destoryed");
     },
   },
   "app"
 );
-
-setTimeout(() => {
-  component.changeSomeData("somethingElse");
-}, 500);
