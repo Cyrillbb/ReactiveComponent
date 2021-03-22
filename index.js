@@ -39,7 +39,9 @@ class ReactiveComponent {
   destroy() {
     this.mountTarget.innerHTML = "";
     this.beforeDestroy();
-    // this = '';
+    let that = this;
+    that = undefined
+    console.log(this)
   }
 }
 
@@ -77,7 +79,7 @@ let component = new ReactiveComponent(
         this.changeSomeData("somethingElse");
       }, 500);
       setTimeout(() => {
-        this.destroy;
+        this.destroy();
       }, 1000)
     },
     beforeDestroy() {
